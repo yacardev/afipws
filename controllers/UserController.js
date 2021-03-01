@@ -37,8 +37,6 @@ class UserController {
         const { body } = req;
         try {
             const created = await this.userService.create(body);
-
-
             if (created) {
                 return res.status(201).json(created);
             }

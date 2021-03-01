@@ -28,9 +28,11 @@ var classesSchema = new Schema({
         required: [true, 'Fecha creacion obligatorio'],
         default: Date.now
     }
-})*/
-
-
+})
 classesSchema.plugin(uniqueValidator, { message: '{PATH} must be unique.' });
+*/
+
+
+
 module.exports = ClassModel;
 //module.exports = mongoose.model('Classes', classesSchema);
