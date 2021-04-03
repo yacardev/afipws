@@ -13,7 +13,6 @@ const WSAAServiceInstance = new WSAAService(WSAAModel);
 let validate = async function(req, res, next) {
     try {
         const ticket = await WSAAServiceInstance.findOne();
-        //console.log('validate ticket: ', ticket);
         if (ticket) {
             let dateNow = new Date();
             //console.log('validate ticket exp.time: ', ticket.expiration_time);
@@ -34,7 +33,7 @@ let validate = async function(req, res, next) {
         }
     } catch (e) {
         //console.log('catch validate()', e);
-        res.render('index', { message: { data: {} }, errors: { message: e } });
+        res.render('index', { message: {}, errors: { message: e } });
     }
 };
 

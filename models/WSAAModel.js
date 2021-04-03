@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const WSAAModel = mongoose.model('WSAA_TAS', {
+const WSAAModel = mongoose.model('WSAA_TA', {
     unique_id: {
         type: Number,
         required: [true, 'Unique ID obligatorio'],
