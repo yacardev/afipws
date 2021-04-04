@@ -2,7 +2,7 @@ doctype html
 head 
   meta(charset='utf-8')
   meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
-  title Validar QR AFIP
+  title Validar QR Comprobantes electronicos
   link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css')
   link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
 
@@ -15,17 +15,18 @@ head
 .container
   .card
     .card-header.bg-info.text-center.text-white 
-      h1 Validador QR AFIP
+      h1 Validar QR de Comprobantes Electronicos
     .card-body.bg-light 
       .container-fluid 
         form(action='api/qr/validate' method='post')
+          .small.text-secondary Copiar la URL leyendo el QR desde la camara del celular o instalar una extension (QR Reader) para el navegador  
           .form-group
-            input.form-control(type='text', name='url' placeholder='Copiar Link del QR' required='required')    
+            input.form-control(type='text', name='url' placeholder='Pegar Link del QR' required='required')              
           .form-group 
             .list-group.list-group-horizontal 
-              .list-group-item
-                button.btn.btn-secondary(onclick='window.location.reload()' type='reset') Limpiar  
-              .list-group-item  
+              .list-group-item-light
+                button.btn.btn-light(onclick='window.location.reload()' type='reset') Limpiar  
+              .list-group-item-light  
                 button.btn.btn-primary(type='submit') Validar
 
   
@@ -40,7 +41,7 @@ head
              .text-left
                = message.data.json_url_data 
           if message.data.resp_result === 'R'
-            .card.bg-light.text-danger.text-center Rechazado. Verificar
+            .card.bg-light.text-danger.text-center Rechazado. Verificar:
              .table-responsive
                table.table
                 tr
@@ -52,7 +53,7 @@ head
                  if message.data.resp_errors
                    each val, key in JSON.parse(message.data.resp_errors)  
                     td
-                    .text-left.text-white 
+                    .text-left.text-danger 
                       = key + ':' + val
                 
           if message.data.resp_result === 'A'
@@ -70,8 +71,9 @@ head
         a.small(href='https://www.afip.gob.ar/ws/WSCDCV1/WSCDC_manual_desarrollador_v.2.pdf' target="_blank") AFIP - Manual para el desarrollador (Servicio Constatacion de Comprobantes)
       
     .card-footer.bg-light  
-      .text-body Desarrollado por 
-      a.small(href='https://www.afip.gob.ar/ws/documentacion/arquitectura-general.asp' target="_blank") YacarDev 
+      .text-body
+      .text-center
+       a.small(href='https://yacardev.github.io/' target="_blank") Desarrollado por YacarDev
 
 
   

@@ -21,29 +21,36 @@ const routes = function(app) {
         if (URL.startsWith(startURL)) {
             URL = URL.replace(startURL, '');
             let buff = Buffer.from(URL, 'base64');
+
             try {
-                let jsonData = JSON.parse(buff.toString('utf-8'));
-                (async() => {
-                    //Se obtiene el token y sign validos
-                    let token = await WSAAController.getTokenAndSign();
-                    //console.log('token', token);
+                if (buff.toString('utf-8')) {
 
-                    let WSCDC = {
-                        base64_url_data: URL,
-                        json_url_data: JSON.stringify(jsonData)
-                    };
+                    let jsonData = JSON.parse(buff.toString('utf-8'));
 
-                    //Se guardan los datos de la URL en mongo.wscdc
-                    let WSCDCNew = await WSCDCController.create(WSCDC);
+                    (async() => {
+                        //Se obtiene el token y sign validos
+                        let token = await WSAAController.getTokenAndSign();
+                        //console.log('token', token);
 
-                    //Una vez guardados se hace el request al servicio de Constatacion de AFIP
-                    await WSCDCController.wscdcSoap(token, WSCDCNew);
-                    //console.log('WSCDCNew', WSCDCNew);
-                    res.render('index', { message: { data: WSCDCNew }, errors: {} });
-                })();
+                        let WSCDC = {
+                            base64_url_data: URL,
+                            json_url_data: JSON.stringify(jsonData)
+                        };
+
+                        //Se guardan los datos de la URL en mongo.wscdc
+                        let WSCDCNew = await WSCDCController.create(WSCDC);
+
+                        //Una vez guardados se hace el request al servicio de Constatacion de AFIP
+                        await WSCDCController.wscdcSoap(token, WSCDCNew);
+                        //console.log('WSCDCNew', WSCDCNew);
+                        res.render('index', { message: { data: WSCDCNew }, errors: {} });
+                    })();
+                } else {
+                    res.render('index', { message: {}, errors: { message: 'Verificar URL. No se pudieron obtener los valores.' } });
+                }
 
             } catch (e) {
-                res.render('index', { message: {}, errors: { message: e } }); //'Verificar URL. No se pudieron obtener los valores.'
+                res.render('index', { message: {}, errors: { message: e } });
             }
         } else {
             let msgError = `Verificar URL. Debe comenzar con: ${startURL}`;
