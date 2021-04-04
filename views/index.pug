@@ -5,52 +5,73 @@ head
   title Validar QR AFIP
   link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css')
   link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+
   script(src='https://code.jquery.com/jquery-3.5.1.min.js')
   script(src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js')
   script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js')
   script(type='text/javascript').
     window.history.pushState("", "", '/');
 
-  style.
-    .login-form {
-    width: 75%;
-    margin: 50px auto;
-    font-size: 15px;
-    }
-    .login-form form {
-    margin-bottom: 15px;
-    background: #f7f7f7;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    padding: 30px;
-    }
-    .login-form h2 {
-    margin: 0 0 15px;
-    }
-    .form-control, .btn {
-    min-height: 38px;
-    border-radius: 2px;
-    }
-    .btn {
-    font-size: 15px;
-    font-weight: bold;
-    }
+.container
+  .card
+    .card-header.bg-info.text-center.text-white 
+      h1 Validador QR AFIP
+    .card-body.bg-light 
+      .container-fluid 
+        form(action='api/qr/validate' method='post')
+          .form-group
+            input.form-control(type='text', name='url' placeholder='Copiar Link del QR' required='required')    
+          .form-group 
+            .list-group.list-group-horizontal 
+              .list-group-item
+                button.btn.btn-secondary(onclick='window.location.reload()' type='reset') Limpiar  
+              .list-group-item  
+                button.btn.btn-primary(type='submit') Validar
 
-.login-form
-  form(action='api/qr/validate' method='post')
-    h2.text-center Validar Comprobante AFIP
-    .form-group
-      input.form-control(type='text', name='url' placeholder='Copiar Link' required='required')
-    .form-group
-      button.btn.btn-primary(type='submit') Validar
-    if errors.message
-         small#messageHelp.text-danger
-          = errors.message  
-    if message.data
-         small#messageHelp.text-info
-          = message.data  
-  br
-  //Footer
-  Footer
-   footer.footer.bg-black.small.text-center.text-white-50
-   .container Copyright &copy; Your Website 2020
+  
+      .container
+        if errors.message
+          .card.bg-light.text-danger.text-center  
+            = errors.message
+        if message.data
+          if message.data.json_url_data 
+            .card.bg-light
+             .text-center JSON de la URL decodificada:
+             .text-left
+               = message.data.json_url_data 
+          if message.data.resp_result === 'R'
+            .card.bg-light.text-danger.text-center Rechazado. Verificar
+             .table-responsive
+               table.table
+                tr
+                 if message.data.resp_observations
+                   each val, key in JSON.parse(message.data.resp_observations)  
+                    td
+                    .text-left.text-danger 
+                      = key + ':' + val
+                 if message.data.resp_errors
+                   each val, key in JSON.parse(message.data.resp_errors)  
+                    td
+                    .text-left.text-white 
+                      = key + ':' + val
+                
+          if message.data.resp_result === 'A'
+            .card.bg-success.text-body.text-center Comprobante aceptado por la AFIP
+          
+    .card-footer.bg-light 
+      .text-body Sitios de Interes
+      li 
+        a.small(href='https://www.afip.gob.ar/fe/qr/especificaciones.asp' target="_blank") AFIP - Especificaciones QR
+      li 
+        a.small(href='https://www.afip.gob.ar/ws/programadores/web-services-SOAP.asp' target="_blank") AFIP - SOAP Web Services
+      li  
+        a.small(href='https://www.afip.gob.ar/ws/documentacion/arquitectura-general.asp' target="_blank") AFIP - SOAP Documentacion
+      li
+        a.small(href='https://www.afip.gob.ar/ws/WSCDCV1/WSCDC_manual_desarrollador_v.2.pdf' target="_blank") AFIP - Manual para el desarrollador (Servicio Constatacion de Comprobantes)
+      
+    .card-footer.bg-light  
+      .text-body Desarrollado por 
+      a.small(href='https://www.afip.gob.ar/ws/documentacion/arquitectura-general.asp' target="_blank") YacarDev 
+
+
   

@@ -6,7 +6,7 @@ class WSAAService {
     findOne() {
         //Se obtiene el token/sign activo
         try {
-            const token = this.wsaaModel.findOne({ active: true }, 'expiration_time', ); //unique_id token sign 
+            const token = this.wsaaModel.findOne({ active: true }, 'token sign expiration_time', );
             //console.log('token findOne()', token.expiration_time);
             return token;
         } catch (e) {
@@ -17,7 +17,7 @@ class WSAAService {
 
     create(data) {
         //antes de grabar el nuevo Token se inactiva el anterior
-        try { //AndUpdate
+        try {
             const wsaaNew = this.wsaaModel(data);
             return wsaaNew.save();
         } catch (e) {

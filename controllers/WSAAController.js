@@ -15,20 +15,22 @@ let validate = async function(req, res, next) {
         const ticket = await WSAAServiceInstance.findOne();
         if (ticket) {
             let dateNow = new Date();
+            dateNow.setHours(dateNow.getHours() - 3);
             //console.log('validate ticket exp.time: ', ticket.expiration_time);
+
             //Existe, valida fecha de expiracion
             if (ticket.expiration_time <= dateNow) {
                 //console.log('expiro fecha');
+
                 //Se inactivan el/los vencidos
                 await WSAAServiceInstance.updateMany();
-
                 //Se ingresa el nuevo TA
                 await createCMS();
             }
             next();
         } else {
             //No existe, se crea el CMS
-            const WSAA_Ticket = await createCMS();
+            await createCMS();
             next();
         }
     } catch (e) {
@@ -45,7 +47,7 @@ let createCMS = async function() {
         " <generationTime>pGenerationTime</generationTime>" +
         " <expirationTime>pExpirationTime</expirationTime>" +
         "</header>" +
-        "<service>pWS</service>" +
+        "<service>pWebService</service>" +
         "</loginTicketRequest>";
 
 
@@ -55,13 +57,13 @@ let createCMS = async function() {
     let pGenerationTime = date.toISOString();
     date.setDate(date.getDate() + 1);
     let pExpirationTime = date.toISOString();
-    const pWS = 'wscdc';
+    const pWebService = 'wscdc';
 
     //Replace values in Xml
     let loginTicketRequestxml = ((loginTicketRequest.replace(/pUniqueID/, pUniqueID))
         .replace(/pGenerationTime/, pGenerationTime)
         .replace(/pExpirationTime/, pExpirationTime)
-        .replace(/pWS/, pWS));
+        .replace(/pWebService/, pWebService));
 
     let pem = (process.env.AFIP_CRT).toString('utf8');
     let key = (process.env.AFIP_KEY).toString('utf8');
@@ -76,11 +78,11 @@ let createCMS = async function() {
     let cms = forge.pkcs7.messageToPem(p7).replace(/-----BEGIN PKCS7-----/, "").replace(/-----END PKCS7-----/, "").replace(/\r\n/g, "");
     //console.log('pUniconst soap = require('soap');
     let ticket = { 'cms': cms };
-    return await create(ticket);
+    return await createTA(ticket);
 };
 
 
-let create = async function(data) {
+let createTA = async function(data) {
     //Peticion soap para obtener el token/sign
     let TA_WSAA = await SoapController.soapReqLogin(data);
 
@@ -94,15 +96,10 @@ let create = async function(data) {
     return ticket;
 };
 
-
-
-let getTokenAndSign = async function(req, res) {
+let getTokenAndSign = async function() {
     console.log('getTokenAndSign');
     const token = await WSAAServiceInstance.findOne();
-    console.log('token', token);
-    await new Promise(r => setTimeout(r, 5000));
-    return res.render('index', { message: { data: 'devolucion de los datos' }, errors: {} });
-    //return token;
+    return token;
 };
 
 module.exports = { validate, getTokenAndSign };

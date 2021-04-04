@@ -2,7 +2,7 @@ const soap = require('soap');
 const xml2js = require('xml2js');
 
 let soapReqLogin = async function(ticket) {
-    console.log('soapReqLoginCms');
+    //console.log('soapReqLoginCms');
 
     let TA_WSAA = {};
     // SOAP Client 
@@ -53,9 +53,66 @@ let soapReqLogin = async function(ticket) {
     });
     //console.log('TA_WSAA', TA_WSAA);
     return TA_WSAA;
-
-
 };
 
+let soapWSCDC = async function(token, wscdc) {
+    //console.log('soapWSCDC');
 
-module.exports = { soapReqLogin };
+    // SOAP Client 
+    const soapClientOptions = { disableCache: true, endpoint: process.env.AFIP_WSCDC_URI };
+    //console.log('soapClientOptions:', soapClientOptions);
+
+    // Create SOAP client
+    const soapClient = await soap.createClientAsync(process.env.AFIP_WSCDC_WSDL, soapClientOptions);
+    //console.log('soapClient:', soapClient);
+
+    // Parameters for soap client request 
+    let jsonComp = JSON.parse(wscdc.json_url_data.toString('utf-8'));
+    //console.log('jsonComp', jsonComp);
+    let cbteModo = '';
+    if (jsonComp.tipoCodAut === 'E') cbteModo = 'CAE';
+    if (jsonComp.tipoCodAut === 'A') cbteModo = 'CAEA';
+
+    const ConstatarArguments = {
+        Auth: {
+            Token: token.token,
+            Sign: token.sign,
+            Cuit: process.env.CUIT
+        },
+        CmpReq: {
+            CbteModo: cbteModo,
+            CuitEmisor: jsonComp.cuit,
+            PtoVta: jsonComp.ptoVta,
+            CbteTipo: jsonComp.tipoCmp,
+            CbteNro: jsonComp.nroCmp,
+            CbteFch: jsonComp.fecha.replace(/-/g, ""),
+            ImpTotal: jsonComp.importe,
+            CodAutorizacion: jsonComp.codAut
+        }
+    };
+    //console.log('ConstatarArguments:', ConstatarArguments);
+
+    // Call loginCms SOAP method
+    const [ComprobanteConstatar] = await soapClient.ComprobanteConstatarAsync(ConstatarArguments); //loginArguments
+    //console.log('ComprobanteConstatar:', ComprobanteConstatar.ComprobanteConstatarResult); //.ComprobanteConstatarResult.Errors
+
+    //Se obtiene la respuesta
+    wscdc.resp_result = ComprobanteConstatar.ComprobanteConstatarResult.Resultado;
+    wscdc.resp_process_date = ComprobanteConstatar.ComprobanteConstatarResult.FchProceso;
+
+    //Obtengo las observaciones
+    if (ComprobanteConstatar.ComprobanteConstatarResult.Observaciones) {
+        wscdc.resp_observations = JSON.stringify(ComprobanteConstatar.ComprobanteConstatarResult.Observaciones.Obs[0]);
+    }
+    //Obtengo los errores
+    if (ComprobanteConstatar.ComprobanteConstatarResult.Errors) {
+        wscdc.resp_errors = JSON.stringify(ComprobanteConstatar.ComprobanteConstatarResult.Errors.Err[0]);
+    }
+
+
+    //console.log('result wscdc', wscdc);
+
+    return;
+};
+
+module.exports = { soapReqLogin, soapWSCDC };
