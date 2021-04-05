@@ -24,8 +24,12 @@ const routes = function(app) {
 
             try {
                 if (buff.toString('utf-8')) {
-
-                    let jsonData = JSON.parse(buff.toString('utf-8'));
+                    let jsonData;
+                    try {
+                        jsonData = JSON.parse(buff.toString('utf-8'));
+                    } catch (e) {
+                        res.render('index', { message: {}, errors: { message: 'La URL no se encuentra codificada correctamente.' } });
+                    }
 
                     (async() => {
                         //Se obtiene el token y sign validos
