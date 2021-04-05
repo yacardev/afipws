@@ -35,11 +35,6 @@ head
           .card.bg-light.text-danger.text-center  
             = errors.message
         if message.data
-          if message.data.json_url_data 
-            .card.bg-light
-             .text-center JSON de la URL decodificada:
-             .text-left
-               = message.data.json_url_data 
           if message.data.resp_result === 'R'
             .card.bg-light.text-danger.text-center Rechazado. Verificar:
              .table-responsive
@@ -54,11 +49,56 @@ head
                    each val, key in JSON.parse(message.data.resp_errors)  
                     td
                     .text-left.text-danger 
-                      = key + ':' + val
-                
+                      = key + ':' + val    
+               table.table
+                tr
+                  if message.data.json_url_data
+                    each val, key in JSON.parse(message.data.json_url_data)
+                      if key === 'fecha'
+                       tr
+                          .text-left.text-secondary
+                           = "Fecha del Comprobante: "+ val
+                      if key === 'cuit'
+                       tr
+                         .text-left.text-secondary
+                          = "CUIT Emisor: "+ val    
+                      if key === 'importe'
+                       tr
+                         .text-left.text-secondary
+                          = "Importe: "+ val
+                      if key === 'codAut'
+                       tr
+                         .text-left.text-secondary
+                          = "Codigo de Autorizacion: "+ val 
           if message.data.resp_result === 'A'
             .card.bg-light.text-success.text-center Comprobante aceptado por la AFIP
-          
+             .table-responsive
+               table.table
+                tr
+                 if message.data.json_url_data
+                   each val, key in JSON.parse(message.data.json_url_data)
+                     if key === 'fecha'
+                       tr
+                         .text-left.text-secondary
+                          = "Fecha del Comprobante: "+ val
+                     if key === 'cuit'
+                       tr
+                         .text-left.text-secondary
+                          = "CUIT Emisor: "+ val    
+                     if key === 'importe'
+                       tr
+                         .text-left.text-secondary
+                          = "Importe: "+ val
+                     if key === 'codAut'
+                       tr
+                         .text-left.text-secondary
+                          = "Codigo de Autorizacion: "+ val          
+          if message.data.json_url_data 
+            .card.bg-light
+             .text-center.text-secondary JSON de la URL decodificada:
+             .text-left.text-secondary
+               = message.data.json_url_data
+
     .card-footer.bg-light 
       .text-body Sitios de Interes
       li 
