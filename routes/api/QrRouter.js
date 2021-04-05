@@ -28,7 +28,11 @@ const routes = function(app) {
                     try {
                         jsonData = JSON.parse(buff.toString('utf-8'));
                     } catch (e) {
-                        res.render('index', { message: {}, errors: { message: 'La URL no se encuentra codificada correctamente.' } });
+                        let msgErr = 'La URL no se encuentra codificada correctamente. Verificar el JSON generado.' +
+                            '\r\nEj: puede haber algun campo enviado que no tenga un valor asociado.\r\nEl JSON debe inciar y terminar con {}.';
+                        let jsonString = buff.toString('utf-8');
+                        res.render('index', { message: { data: { json_string: jsonString } }, errors: { message: msgErr } });
+                        return;
                     }
 
                     (async() => {

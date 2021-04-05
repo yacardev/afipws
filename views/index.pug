@@ -98,7 +98,11 @@ head
              .text-center.text-secondary JSON de la URL decodificada:
              .text-left.text-secondary
                = message.data.json_url_data
-
+          if message.data.json_string 
+            .card.bg-light
+             .text-center.text-secondary JSON de la URL decodificada:
+             .text-left.text-secondary
+               = message.data.json_string
     .card-footer.bg-light 
       .text-body Sitios de Interes
       li 
