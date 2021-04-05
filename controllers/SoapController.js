@@ -73,22 +73,28 @@ let soapWSCDC = async function(token, wscdc) {
     if (jsonComp.tipoCodAut === 'E') cbteModo = 'CAE';
     if (jsonComp.tipoCodAut === 'A') cbteModo = 'CAEA';
 
+    //Obligatorios
+    let CmpReq = {
+        CbteModo: cbteModo,
+        CuitEmisor: jsonComp.cuit,
+        PtoVta: jsonComp.ptoVta,
+        CbteTipo: jsonComp.tipoCmp,
+        CbteNro: jsonComp.nroCmp,
+        CbteFch: jsonComp.fecha.replace(/-/g, ""),
+        ImpTotal: jsonComp.importe,
+        CodAutorizacion: jsonComp.codAut
+    };
+    //Opcionales, se envian si fueron detallados
+    if (jsonComp.tipoDocRec) CmpReq.DocTipoReceptor = jsonComp.tipoDocRec;
+    if (jsonComp.nroDocRec) CmpReq.DocNroReceptor = jsonComp.nroDocRec;
+
     const ConstatarArguments = {
         Auth: {
             Token: token.token,
             Sign: token.sign,
             Cuit: process.env.CUIT
         },
-        CmpReq: {
-            CbteModo: cbteModo,
-            CuitEmisor: jsonComp.cuit,
-            PtoVta: jsonComp.ptoVta,
-            CbteTipo: jsonComp.tipoCmp,
-            CbteNro: jsonComp.nroCmp,
-            CbteFch: jsonComp.fecha.replace(/-/g, ""),
-            ImpTotal: jsonComp.importe,
-            CodAutorizacion: jsonComp.codAut
-        }
+        CmpReq: CmpReq
     };
     //console.log('ConstatarArguments:', ConstatarArguments);
 
