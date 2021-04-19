@@ -5,22 +5,18 @@ class WSCDCService {
 
     create(data) {
         try {
-            const wscdcNew = this.wscdcModel(data);
+            let wscdcNew = this.wscdcModel(data);
             return wscdcNew.save();
-        } catch (e) {
-            return e.Error;
+        } catch (err) {
+            return err.message;
         }
     }
 
     findByIdAndUpdate(data) {
-        //console.log('findByIdAndUpdate()', data);
         try {
-            const WSCDCUpd = this.wscdcModel.findByIdAndUpdate(data._id, data);
-            return WSCDCUpd;
-
-        } catch (e) {
-            return e.Error;
-
+            return this.wscdcModel.findByIdAndUpdate(data._id, data);
+        } catch (err) {
+            return err.message;
         }
 
     }

@@ -13,6 +13,7 @@ const WS_WSCDC = mongoose.model('WS_WSCDCS', {
     resp_observations: { type: String },
     resp_errors: { type: String },
     resp_process_date: { type: String },
+    req_error: { type: String },
     creation_date: {
         type: Date,
         default: getDate(),

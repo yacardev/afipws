@@ -9,9 +9,9 @@ class WSAAService {
             const token = this.wsaaModel.findOne({ active: true }, 'token sign expiration_time', );
             //console.log('token findOne()', token.expiration_time);
             return token;
-        } catch (e) {
+        } catch (err) {
             //console.log('token findOne() error.', e);
-            return e.Error;
+            return err.message;
         }
     }
 
@@ -20,8 +20,8 @@ class WSAAService {
         try {
             const wsaaNew = this.wsaaModel(data);
             return wsaaNew.save();
-        } catch (e) {
-            return e.Error;
+        } catch (err) {
+            return err.message;
         }
     }
 
@@ -30,8 +30,8 @@ class WSAAService {
             //Se inactivan el/los ticket vencidos antes de insertar el nuevo
             const wsaaUpd = this.wsaaModel.updateMany({ active: true }, { active: false });
             return wsaaUpd;
-        } catch (e) {
-            return e.Error;
+        } catch (err) {
+            return err.message;
         }
     }
 

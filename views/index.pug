@@ -19,7 +19,8 @@ head
     .card-body.bg-light 
       .container-fluid 
         form(action='api/qr/validate' method='post')
-          .small.text-secondary Copiar la URL leyendo el QR desde la camara del celular o instalar una extension (QR Reader) para el navegador  
+          .small.text-secondary Copiar la URL leyendo el QR desde la camara del celular o instalar una extension (QR Reader) para el navegador.  
+          .small.text-secondary La validacion se realiza contra el servicio de AFIP: WSCDC - Constatacion de Comprobantes.
           .form-group
             input.form-control(type='text', name='url' placeholder='Pegar Link del QR' required='required')              
           .form-group 
@@ -117,7 +118,7 @@ head
     .card-footer.bg-light  
       .text-body
       .text-center
-       a.small(href='https://yacardev.github.io/' target="_blank") Desarrollado por YacarDev
+       a.small(href='https://yacardev.github.io/' target="_blank") @YacarDev
 
 
   
